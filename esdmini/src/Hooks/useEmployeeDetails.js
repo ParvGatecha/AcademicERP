@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
 import { fetchEmployeesAPI } from "../Utils/httputils";
 import Employee from "../Model/Employee";
+import { useNavigate } from "react-router-dom";
 
 const useEmployeeDetails = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const fetchEmployees = async () => {
     const token = localStorage.getItem("jwt");
     try {
       setLoading(true);
-      if (!token) throw new Error("Unauthorized: No token found");
-      const data = await fetchEmployeesAPI(token);
+      if (!token) navigate('/');
+      const data = await fetchEmployeesAPI();
       setEmployees(data.map((emp) => new Employee(emp)));
     } catch (err) {
       setError(err.message);

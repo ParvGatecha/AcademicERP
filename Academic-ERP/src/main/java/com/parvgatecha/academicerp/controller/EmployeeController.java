@@ -23,9 +23,9 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final JWTHelper jwtHelper;
 
-    @PatchMapping()
-    public ResponseEntity<String> updatePassword(@RequestBody @Valid EmployeeRequest employeeRequest) {
-        return ResponseEntity.ok(employeeService.updatePassword(employeeRequest));
+    @PostMapping("/add")
+    public ResponseEntity<String> addEmployee(@RequestBody @Valid EmployeeResponse employee) {
+        return ResponseEntity.ok(employeeService.addEmployee(employee));
     }
 
     @PostMapping()

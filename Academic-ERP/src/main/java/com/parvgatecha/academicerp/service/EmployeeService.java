@@ -35,16 +35,18 @@ public class EmployeeService {
     private final EncryptionService encryptionService;
     private final JWTHelper jwtHelper;
 
-    public String updatePassword(EmployeeRequest request) {
-        Optional<Employees> optionalEmployee = employeeRepo.findByEmail(request.email());
+    public String addEmployee(EmployeeResponse request) {
+        Employees emp = Employees.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .password(encryptionService.encodePassword(request.password()))
+                .title(request.title())
+                .salary(request.salary())
+                .build();
 
-        if (optionalEmployee.isPresent()) {
-            Employees employee = optionalEmployee.get();
-            Employees mapperEntity = employeesMapper.toEntity(request);
-            employee.setPassword(encryptionService.encodePassword(mapperEntity.getPassword()));
-            employeeRepo.save(employee);
-        }
-        return "Password updated";
+        employeeRepo.save(emp);
+        return "Added";
     }
 
     public EmployeeAuthResponse loginCustomer(LoginRequest request) {

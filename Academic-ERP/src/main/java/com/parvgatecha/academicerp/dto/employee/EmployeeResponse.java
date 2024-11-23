@@ -27,6 +27,9 @@ public record EmployeeResponse(
         @JsonProperty("department")
         String departmentName,
 
+        @JsonProperty("password")
+        String password,
+
         @JsonProperty("paymentDate")
         java.time.LocalDateTime paymentDate
 ) {
