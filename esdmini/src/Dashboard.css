@@ -1,0 +1,49 @@
+.dashboard {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+.dashboard label{
+    color:black !important;
+}
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+.dashboard input{
+    color:black !important;
+}
+  .employee-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .employee-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .employee-photo {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    margin-bottom: 15px;
+  }
+  
+  h2 {
+    margin: 10px 0;
+    font-size: 1.5em;
+    color: #333;
+  }
+  
+  p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
