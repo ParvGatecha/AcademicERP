@@ -27,7 +27,6 @@ public record EmployeeResponse(
         @JsonProperty("department")
         String departmentName,
 
-
         @JsonProperty("paymentDate")
         java.time.LocalDateTime paymentDate,
 

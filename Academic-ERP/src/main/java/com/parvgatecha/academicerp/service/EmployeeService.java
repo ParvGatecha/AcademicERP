@@ -36,6 +36,11 @@ public class EmployeeService {
     private final JWTHelper jwtHelper;
 
     public String addEmployee(EmployeeResponse request) {
+        Departments department = departmentsRepo.findByName(request.departmentName());
+        if(department == null){
+            department = Departments.builder().name(request.departmentName()).build();
+            departmentsRepo.save(department);
+        }
         Employees emp = Employees.builder()
                 .firstName(request.firstName())
                 .lastName(request.lastName())
@@ -43,6 +48,7 @@ public class EmployeeService {
                 .password(encryptionService.encodePassword(request.password()))
                 .title(request.title())
                 .salary(request.salary())
+                .department(department)
                 .build();
 
         employeeRepo.save(emp);

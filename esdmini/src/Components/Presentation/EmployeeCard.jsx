@@ -26,9 +26,12 @@ const EmployeeCard = ({ employee, isSelected, onCheckboxChange, onModifyClick })
       />
 
       {/* Modify Button */}
-      <Button variant="outlined" color="primary" sx={{ marginLeft: 2 }} onClick={() => onModifyClick(employee)}>
+      
+      {employee.department == "Faculty" && (
+        <Button variant="outlined" color="primary" sx={{ marginLeft: 2 }} onClick={() => onModifyClick(employee)}>
         Modify
       </Button>
+      )}
     </ListItem>
   );
 };

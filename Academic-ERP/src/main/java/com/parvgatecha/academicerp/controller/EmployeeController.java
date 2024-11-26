@@ -18,7 +18,6 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/employees")
-@CrossOrigin("http:localhost:3000/")
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final JWTHelper jwtHelper;
@@ -37,7 +36,7 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(employeeAuthResponse);
         }
     }
-    @CrossOrigin("http://localhost:3000")
+
     @GetMapping("/get")
     public ResponseEntity<List<EmployeeResponse>> getEmployees(@RequestHeader(name="Authorization") String authToken) {
         String token = authToken.split(" ")[1].trim();
