@@ -55,7 +55,8 @@ public class EmployeesMapper {
                 employees.getSalary(),
                 employees.getPhotographPath(),
                 employees.getDepartment().getName(),
-                paymentDate
+                paymentDate,
+                null
         );
     }
 }

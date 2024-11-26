@@ -8,7 +8,6 @@ public class JwtTokenNotValid extends RuntimeException {
 
     }
     public JwtTokenNotValid(String message) {
-
         super(message);
         this.message = message;
     }

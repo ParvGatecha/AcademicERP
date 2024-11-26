@@ -17,17 +17,10 @@ public class GlobalException {
         return new ResponseEntity<>(er, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = StudentAllreadyAllocated.class)
-    public ResponseEntity<ErrorResponse> handleExceptionStudentAllreadyAllocated(StudentAllreadyAllocated studentAllreadyAllocated) {
-        ErrorResponse er=new ErrorResponse();
-        er.setMessage(studentAllreadyAllocated.getMessage());
-        er.setStatusCode(HttpStatus.CONFLICT.value());
-        return new ResponseEntity<>(er, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(value = JwtTokenNotValid.class)
     public ResponseEntity<ErrorResponse> handleExceptionJwtTokenNotValid(JwtTokenNotValid tokenNotValid) {
         ErrorResponse er=new ErrorResponse();
+        System.out.println("erherhergw");
         er.setMessage(tokenNotValid.getMessage());
         er.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);

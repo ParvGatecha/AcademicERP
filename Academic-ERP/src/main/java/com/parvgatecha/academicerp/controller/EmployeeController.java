@@ -17,8 +17,8 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000/")
 @RequestMapping("/api/v1/employees")
+@CrossOrigin("http:localhost:3000/")
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final JWTHelper jwtHelper;
@@ -28,7 +28,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.addEmployee(employee));
     }
 
-    @PostMapping()
+    @PostMapping("/login")
     public ResponseEntity<EmployeeAuthResponse> loginEmployee(@RequestBody @Valid LoginRequest loginRequest) {
         EmployeeAuthResponse employeeAuthResponse = employeeService.loginCustomer(loginRequest);
         if (employeeAuthResponse.statusCode() == 201) {
@@ -37,8 +37,8 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(employeeAuthResponse);
         }
     }
-
-    @GetMapping()
+    @CrossOrigin("http://localhost:3000")
+    @GetMapping("/get")
     public ResponseEntity<List<EmployeeResponse>> getEmployees(@RequestHeader(name="Authorization") String authToken) {
         String token = authToken.split(" ")[1].trim();
         Long id = jwtHelper.extractUserId(token);

@@ -2,8 +2,10 @@ package com.parvgatecha.academicerp.helper;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -13,7 +15,7 @@ import java.util.function.Function;
 
 @Component
 public class JWTHelper {
-    private String SECRET_KEY = "cr666N7wIV+JHnv78pWtcfAekL4YXd9gbnJMs8SJ9sI=";
+    private static String SECRET_KEY = "cr666N7wIV+JHnv78pWtcfAekL4YXd9gbnJMs8SJ9sI=";
 
     // Extract username from the token
     public Long extractUserId(String token) {
@@ -21,8 +23,22 @@ public class JWTHelper {
     }
 
     // Extract expiration date from the token
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public static Date getExpirationDate(String token) {
+        try {
+            // Parse claims without validating the token
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY) // Replace with your signing key
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getExpiration();
+        } catch (ExpiredJwtException ex) {
+            // Handle expired JWT separately
+            return ex.getClaims().getExpiration();
+        } catch (SignatureException ex) {
+            throw new IllegalArgumentException("Invalid JWT token");
+        }
     }
 
     // Extract claims
@@ -38,14 +54,16 @@ public class JWTHelper {
 
     // Check if token is expired
     private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        Date d = getExpirationDate(token);
+        Date now = new Date();
+        return getExpirationDate(token).before(new Date());
     }
 
     // Generate token
     public String generateToken(Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("iat", new Date(System.currentTimeMillis()));
-        claims.put("exp", new Date(System.currentTimeMillis() + 1000 ));  // Token valid for 1 hour
+        claims.put("exp", new Date(System.currentTimeMillis() + 1000*10));  // Token valid for 1 hour
         claims.put("sub", userId.toString());
         return createToken(claims);
     }

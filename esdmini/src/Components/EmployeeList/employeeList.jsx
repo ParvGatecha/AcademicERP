@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pagination, InputLabel, FormControl, Select, MenuItem, List, Modal, Box, Typography, TextField, Button, Dialog, DialogContentText, DialogContent, DialogTitle, DialogActions } from "@mui/material";
 import EmployeeCard from "../Presentation/EmployeeCard";
 import useEmployeeDetails from "../../Hooks/useEmployeeDetails";
-import { updateEmployee,fetchEmployees, disburseSalaries } from "../../Utils/httputils";
+import { updateEmployee, disburseSalaries } from "../../Utils/httputils";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EmployeeList = () => {
   const {employees, loading, error, fetchEmployees } = useEmployeeDetails();
   const [selectedEmployees, setSelectedEmployees] = useState(new Set());
   const [openModal, setOpenModal] = useState(false);
-  const [editingEmployee, setEditingEmployee] = useState(null);
   const [editedEmployee, setEditedEmployee] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1); // Current page
-  const itemsPerPage = 5; 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [paginatedEmployees, setPaginatedEmployees] = useState([]);
 
   const departmentNames = [...new Set(employees.map((employee) => employee.department))];
 
@@ -32,17 +33,11 @@ const EmployeeList = () => {
     return matchesDepartment && matchesSearch;
   });
 
-  const paginatedEmployees = filteredEmployees.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   const handleDepartmentChange = (event) => {
     setSelectedDepartment(event.target.value);
     setCurrentPage(1); // Reset to first page when filter is applied
   };
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
+
 
   const handleCheckboxChange = (event, employee) => {
     const updatedSelection = new Set(selectedEmployees);
@@ -51,7 +46,6 @@ const EmployeeList = () => {
   };
 
   const handleModifyClick = (employee) => {
-    setEditingEmployee(employee);
     setEditedEmployee({ ...employee });
     setOpenModal(true);
   };
@@ -61,12 +55,22 @@ const EmployeeList = () => {
     setEditedEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = async () => {
-    const token = localStorage.getItem("jwt");
+  const handleFormSubmit = async () => { 
     try {
       await updateEmployee(editedEmployee);
       fetchEmployees();
       setOpenModal(false);
+      toast.success('Employee Modified', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition:Bounce,
+        });
     } catch (error) {
       alert("Error updating employee: " + error.message);
     }
@@ -77,18 +81,49 @@ const EmployeeList = () => {
   const handleDisburse = () => {
     if (selectedEmployees.size > 0) {
       const employeeIds = Array.from(selectedEmployees);
-      disburseSalaries(employeeIds)
-      setSelectedEmployees(new Set())
-      setDialogOpen(true);
+      disburseSalaries(employeeIds);
+      setSelectedEmployees(new Set());
+      toast.success('Salary Disbursed', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition:Bounce,
+        });
       console.log('Disbursing funds to employees:', selectedEmployees);
     }
   };
+
+  // Function to handle page change
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    const startIndex = (value - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    setPaginatedEmployees(filteredEmployees.slice(startIndex, endIndex));
+  };
+
+  const handlePageSizeChange = (event) => {
+    const newSize = parseInt(event.target.value, 10);
+    setPageSize(newSize);
+    setCurrentPage(1); // Reset to first page when page size changes
+    setPaginatedEmployees(filteredEmployees.slice(0, newSize));
+  };
+
+  useEffect(() => {
+    setPaginatedEmployees(filteredEmployees.slice(0, pageSize));
+  }, [filteredEmployees, pageSize]);
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (
     <div>
+      
       {/* Department Filter */}
       <FormControl fullWidth style={{ marginBottom: '20px' }}>
         <InputLabel>Department</InputLabel>
@@ -131,14 +166,35 @@ const EmployeeList = () => {
         ))}
       </List>
 
-      {/* Pagination */}
-      <Pagination
-        count={Math.ceil(filteredEmployees.length / itemsPerPage)}
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
-      />
+      {/* Pagination and Page Size Selector */}
+      <div style={{ display: "flex", flexDirection:"column",justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+        {/* Page Size Selector */}
+        <div>
+          <label htmlFor="page-size-select" style={{ marginRight: "0.5rem" }}>
+            Items per page:
+          </label>
+          <Select
+            id="page-size-select"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            style={{ width: "100px" }}
+          >
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+          </Select>
+        </div>
+
+        {/* Pagination */}
+        <Pagination
+          count={Math.ceil(filteredEmployees.length / pageSize)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </div>
 
       {/* Modal */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
@@ -163,20 +219,8 @@ const EmployeeList = () => {
         </Box>
       )}
 
-      {/* Confirmation Dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Salary Disbursement</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Salaries for the selected employees have been successfully disbursed!
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      
+       
 
     </div>
   );

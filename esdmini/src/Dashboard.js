@@ -1,6 +1,8 @@
 import React from "react";
 import { Button } from "@mui/material"; // Import MUI Button for better styling
 import { useNavigate } from "react-router-dom"; // For React Router v6
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import UserList from "./Components/EmployeeList/employeeList";
 
@@ -18,6 +20,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard p-0">
+      
       <div
         className="bg-primary d-flex align-items-center justify-content-between"
       >

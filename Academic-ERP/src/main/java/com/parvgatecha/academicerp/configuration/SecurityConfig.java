@@ -22,7 +22,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         // Add CORS mapping for all endpoints
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000")  // Your frontend URL
-                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")  // Allowed methods
+                .allowedMethods("*")  // Allowed methods
                 .allowedHeaders("*")  // Allow all headers
                 .allowCredentials(true);  // Allow credentials (JWT in headers)
     }
@@ -32,7 +32,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         // Apply the interceptor to all endpoints except /auth/login
         registry.addInterceptor(requestInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/v1/auth/**", "/api/v1/employees");
+                .excludePathPatterns("/api/v1/employees/login");
     }
 
     @Bean
