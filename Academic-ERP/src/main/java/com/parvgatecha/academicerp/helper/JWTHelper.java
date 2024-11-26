@@ -63,7 +63,7 @@ public class JWTHelper {
     public String generateToken(Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("iat", new Date(System.currentTimeMillis()));
-        claims.put("exp", new Date(System.currentTimeMillis() + 1000*10));  // Token valid for 1 hour
+        claims.put("exp", new Date(System.currentTimeMillis() + 1000*60*60*24));  // Token valid for 1 hour
         claims.put("sub", userId.toString());
         return createToken(claims);
     }
