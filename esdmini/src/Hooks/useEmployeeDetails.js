@@ -15,6 +15,7 @@ const useEmployeeDetails = () => {
       setLoading(true);
       if (!token) navigate('/');
       const data = await fetchEmployeesAPI();
+
       setEmployees(data.map((emp) => new Employee(emp)));
     } catch (err) {
       setError(err.message);
