@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import iiitbImage from './Assets/iiitb-image.jpeg';
 import { loginUser } from './Utils/httputils';
@@ -66,7 +66,7 @@ const Login = () => {
         }}
       >
         <Typography variant="h4" align="center" gutterBottom>
-          Admin Login
+          Employee Login
         </Typography>
         <form onSubmit={handleLogin}>
           <Box mb={2}>
@@ -89,11 +89,17 @@ const Login = () => {
               required
             />
           </Box>
-          {error && (
+          {error && ( 
             <Box mb={2}>
               <Alert severity="error">{error}</Alert>
             </Box>
           )}
+          <Typography align="center" sx={{ marginTop: 2 }}>
+                        New Employee?{" "}
+                        <Link to="/register" style={{ color: "primary", fontWeight: "bold" }}>
+                            Register
+                        </Link>
+                    </Typography>
           <Button
             type="submit"
             variant="contained"

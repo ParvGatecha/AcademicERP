@@ -54,9 +54,7 @@ axiosInstance.interceptors.response.use(
 );
 
 export const fetchEmployeesAPI = async () => {
-  console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
   const response = await axiosInstance.get("/employees/get");
-  console.log(response);
   return response.data;
 };
 
@@ -76,3 +74,18 @@ export const disburseSalaries = async (ids) => {
   const response  = await axiosInstance.post("/employees/disburse",ids);
   return response;
 };
+
+export const registerEmployee = async (employee) => {
+  const response = await axiosInstance.post("/employees/add", employee);
+  console.log(response);
+  return response;
+};
+
+export const getDepartments = async () => {
+  const response = await axiosInstance.get("/employees/getDepts");
+  console.log("res");
+  console.log(response);
+  return response.data;
+};
+
+

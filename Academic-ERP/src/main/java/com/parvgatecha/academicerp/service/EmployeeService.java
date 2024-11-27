@@ -52,7 +52,7 @@ public class EmployeeService {
                 .build();
 
         employeeRepo.save(emp);
-        return "Added";
+        return "Registered Successfully";
     }
 
     public EmployeeAuthResponse loginCustomer(LoginRequest request) {
@@ -133,5 +133,9 @@ public class EmployeeService {
         }
 
         return "Salary disbursement completed for selected employees.";
+    }
+
+    public List<Departments> getAllDepartments() {
+        return departmentsRepo.findAll();
     }
 }

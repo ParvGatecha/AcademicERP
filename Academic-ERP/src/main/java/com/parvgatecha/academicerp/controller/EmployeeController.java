@@ -4,6 +4,7 @@ import com.parvgatecha.academicerp.dto.employee.EmployeeAuthResponse;
 import com.parvgatecha.academicerp.dto.employee.EmployeeRequest;
 import com.parvgatecha.academicerp.dto.employee.EmployeeResponse;
 import com.parvgatecha.academicerp.dto.employee.LoginRequest;
+import com.parvgatecha.academicerp.entity.Departments;
 import com.parvgatecha.academicerp.helper.JWTHelper;
 import com.parvgatecha.academicerp.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -55,5 +56,10 @@ public class EmployeeController {
     public ResponseEntity<String> disburseSalary(@RequestBody @Valid Set<EmployeeResponse> emps) {
         System.out.println(emps);
         return ResponseEntity.ok(employeeService.disburseSalary(emps));
+    }
+
+    @GetMapping("/getDepts")
+    public ResponseEntity<List<Departments>> getAllDepartments() {
+        return ResponseEntity.ok(employeeService.getAllDepartments());
     }
 }

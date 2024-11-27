@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalException {
 
     @ExceptionHandler(value = EmployeeNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleExceptionStudentDoesNotExists(EmployeeNotFoundException studentDoesNotExists) {
+    public ResponseEntity<ErrorResponse> handleExceptionStudentDoesNotExists(EmployeeNotFoundException EmployeeDoesNotExists) {
         ErrorResponse er=new ErrorResponse();
-        er.setMessage(studentDoesNotExists.getMessage());
+        er.setMessage(EmployeeDoesNotExists.getMessage());
         er.setStatusCode(HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(er, HttpStatus.NOT_FOUND);
     }

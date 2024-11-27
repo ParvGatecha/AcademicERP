@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Pagination, InputLabel, FormControl, Select, MenuItem, List, Modal, Box, Typography, TextField, Button, Dialog, DialogContentText, DialogContent, DialogTitle, DialogActions } from "@mui/material";
+import { Pagination, InputLabel, FormControl, Select, MenuItem, List, Modal, Box, Typography, TextField, Button } from "@mui/material";
 import EmployeeCard from "../Presentation/EmployeeCard";
 import useEmployeeDetails from "../../Hooks/useEmployeeDetails";
 import { updateEmployee, disburseSalaries } from "../../Utils/httputils";
@@ -12,30 +12,42 @@ const EmployeeList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [editedEmployee, setEditedEmployee] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedTitle, setSelectedTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginatedEmployees, setPaginatedEmployees] = useState([]);
 
   const departmentNames = [...new Set(employees.map((employee) => employee.department))];
+  const titles = [...new Set(employees.map((employee) => employee.title))];
+
 
   const filteredEmployees = employees.filter((employee) => {
-    // Check if the employee matches the department filter
     const matchesDepartment = selectedDepartment
-      ? employee.department === selectedDepartment
-      : true;
+        ? employee.department === selectedDepartment
+        : true;
 
-    // Check if the employee matches the search query in any of the fields
+    const matchesTitle = selectedTitle
+        ? employee.title?.toLowerCase() === selectedTitle.toLowerCase()
+        : true;
+
     const matchesSearch = Object.values(employee).some((value) =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        value ? 
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        : false
     );
 
-    return matchesDepartment && matchesSearch;
+    return matchesDepartment && matchesTitle && matchesSearch;
   });
 
   const handleDepartmentChange = (event) => {
     setSelectedDepartment(event.target.value);
     setCurrentPage(1); // Reset to first page when filter is applied
+  };
+
+  const handleTitleChange = (event) => {
+    setSelectedTitle(event.target.value);
+    setCurrentPage(1);
   };
 
 
@@ -98,12 +110,9 @@ const EmployeeList = () => {
     }
   };
 
-  // Function to handle page change
   const handlePageChange = (event, value) => {
+    console.log(`Page changing to: ${value}`);
     setCurrentPage(value);
-    const startIndex = (value - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    setPaginatedEmployees(filteredEmployees.slice(startIndex, endIndex));
   };
 
   const handlePageSizeChange = (event) => {
@@ -114,8 +123,12 @@ const EmployeeList = () => {
   };
 
   useEffect(() => {
-    setPaginatedEmployees(filteredEmployees.slice(0, pageSize));
-  }, [filteredEmployees, pageSize]);
+    // Update paginated employees whenever filteredEmployees, pageSize, or currentPage changes
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, filteredEmployees.length);
+    setPaginatedEmployees(filteredEmployees.slice(startIndex, endIndex));
+  }, [filteredEmployees, pageSize, currentPage]);
+  
   
 
   if (loading) return <p>Loading...</p>;
@@ -143,6 +156,20 @@ const EmployeeList = () => {
         </Select>
       </FormControl>
 
+      <FormControl fullWidth style={{ marginBottom: "20px" }}>
+          <InputLabel>Title</InputLabel>
+          <Select value={selectedTitle} onChange={handleTitleChange} label="Title">
+            <MenuItem value="">
+              <em>All</em>
+            </MenuItem>
+            {titles.map((title) => (
+                <MenuItem key={title} value={title}>
+                  {title}
+                </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
       {/* Search Bar */}
       <TextField
         fullWidth
@@ -152,7 +179,7 @@ const EmployeeList = () => {
         onChange={(e) => setSearchQuery(e.target.value)}
         style={{ marginBottom: '20px' }}
       />
-      <hr classN></hr>
+      <hr></hr>
 
       <List>
         {paginatedEmployees.map((employee) => (
@@ -187,18 +214,17 @@ const EmployeeList = () => {
           </Select>
         </div>
 
-        {/* Pagination */}
         <Pagination
-          count={Math.ceil(filteredEmployees.length / pageSize)}
-          page={currentPage}
-          onChange={handlePageChange}
+          count={Math.ceil(filteredEmployees.length / pageSize)} // Total number of pages
+          page={currentPage} // Controlled current page
+          onChange={handlePageChange} // Handles page change
           color="primary"
         />
       </div>
 
       {/* Modal */}
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <Box sx={{ width: 400, p: 4, bgcolor: "background.paper", margin: "auto", mt: "15%" }}>
+      <Modal open={openModal} onClose={() => setOpenModal(false)} sx={{display:"flex", alignSelf:"center", justifySelf:"center"}}>
+        <Box sx={{ width: 400, p: 4, bgcolor: "background.paper", margin: "auto" }}>
           <Typography variant="h6">Edit Employee</Typography>
           <TextField disabled name="first_name" label="First Name" fullWidth margin="normal" value={editedEmployee?.first_name || ""} onChange={handleInputChange} />
           <TextField disabled name="last_name" label="Last Name" fullWidth margin="normal" value={editedEmployee?.last_name || ""} onChange={handleInputChange} />
@@ -218,11 +244,6 @@ const EmployeeList = () => {
           </Button>
         </Box>
       )}
-
-      
-
-      
-       
 
     </div>
   );
