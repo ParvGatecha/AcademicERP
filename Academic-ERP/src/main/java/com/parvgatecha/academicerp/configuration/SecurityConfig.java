@@ -19,17 +19,15 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // Add CORS mapping for all endpoints
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")  // Your frontend URL
-                .allowedMethods("*")  // Allowed methods
-                .allowedHeaders("*")  // Allow all headers
-                .allowCredentials(true);  // Allow credentials (JWT in headers)
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // Apply the interceptor to all endpoints except /auth/login
         registry.addInterceptor(requestInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/api/v1/employees/login","/**/options","/api/v1/employees/add","/api/v1/employees/getDepts");

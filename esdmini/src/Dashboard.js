@@ -1,22 +1,66 @@
-import React from "react";
-import { Button } from "@mui/material"; // Import MUI Button for better styling
-import { useNavigate } from "react-router-dom"; // For React Router v6
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+import React , {useEffect} from "react";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast, Bounce, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {jwtDecode} from "jwt-decode";
+
 
 import UserList from "./Components/EmployeeList/employeeList";
 
 const Dashboard = () => {
-  // Use navigate instead of history in React Router v6
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Clear authentication state (e.g., tokens, user data)
-    localStorage.removeItem("jwt"); // Example for token removal
+  const getTokenExpiryTime = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      console.log(decoded);
+      return decoded.exp * 1000;
+    } catch (error) {
+      return null;
+    }
+  };
 
-    // Redirect to the login page after logout
+  const scheduleAutoLogout = (token) => {
+    const expiryTime = getTokenExpiryTime(token);
+    if (!expiryTime) return;
+
+    const currentTime = Date.now();
+    const timeUntilExpiry = expiryTime - currentTime;
+
+    if (timeUntilExpiry > 0) {
+      setTimeout(() => {
+        toast.warning('JWT token expired', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition:Bounce
+          });
+        handleLogout();
+      }, timeUntilExpiry);
+    } else {
+      handleLogout();
+    }
+  };
+
+  
+  const handleLogout = () => {
+    localStorage.removeItem("jwt");
+    
     navigate("/");
   };
+  
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      scheduleAutoLogout(token);
+    }
+  }, []);
 
   return (
     <div className="dashboard p-0">

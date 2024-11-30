@@ -42,7 +42,7 @@ const EmployeeList = () => {
 
   const handleDepartmentChange = (event) => {
     setSelectedDepartment(event.target.value);
-    setCurrentPage(1); // Reset to first page when filter is applied
+    setCurrentPage(1);
   };
 
   const handleTitleChange = (event) => {
@@ -72,7 +72,7 @@ const EmployeeList = () => {
       await updateEmployee(editedEmployee);
       fetchEmployees();
       setOpenModal(false);
-      toast.success('Employee Modified', {
+      toast.success('Employee Salary Modified', {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -89,7 +89,6 @@ const EmployeeList = () => {
   };
 
 
-  // Handle disburse action
   const handleDisburse = () => {
     if (selectedEmployees.size > 0) {
       const employeeIds = Array.from(selectedEmployees);
@@ -118,12 +117,11 @@ const EmployeeList = () => {
   const handlePageSizeChange = (event) => {
     const newSize = parseInt(event.target.value, 10);
     setPageSize(newSize);
-    setCurrentPage(1); // Reset to first page when page size changes
+    setCurrentPage(1);
     setPaginatedEmployees(filteredEmployees.slice(0, newSize));
   };
 
   useEffect(() => {
-    // Update paginated employees whenever filteredEmployees, pageSize, or currentPage changes
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, filteredEmployees.length);
     setPaginatedEmployees(filteredEmployees.slice(startIndex, endIndex));
@@ -137,7 +135,6 @@ const EmployeeList = () => {
   return (
     <div>
       
-      {/* Department Filter */}
       <FormControl fullWidth style={{ marginBottom: '20px' }}>
         <InputLabel>Department</InputLabel>
         <Select
@@ -170,7 +167,6 @@ const EmployeeList = () => {
           </Select>
         </FormControl>
 
-      {/* Search Bar */}
       <TextField
         fullWidth
         variant="outlined"
@@ -193,9 +189,7 @@ const EmployeeList = () => {
         ))}
       </List>
 
-      {/* Pagination and Page Size Selector */}
       <div style={{ display: "flex", flexDirection:"column",justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-        {/* Page Size Selector */}
         <div>
           <label htmlFor="page-size-select" style={{ marginRight: "0.5rem" }}>
             Items per page:
@@ -215,14 +209,13 @@ const EmployeeList = () => {
         </div>
 
         <Pagination
-          count={Math.ceil(filteredEmployees.length / pageSize)} // Total number of pages
-          page={currentPage} // Controlled current page
-          onChange={handlePageChange} // Handles page change
+          count={Math.ceil(filteredEmployees.length / pageSize)} 
+          page={currentPage}
+          onChange={handlePageChange}
           color="primary"
         />
       </div>
 
-      {/* Modal */}
       <Modal open={openModal} onClose={() => setOpenModal(false)} sx={{display:"flex", alignSelf:"center", justifySelf:"center"}}>
         <Box sx={{ width: 400, p: 4, bgcolor: "background.paper", margin: "auto" }}>
           <Typography variant="h6">Edit Employee</Typography>
@@ -236,7 +229,6 @@ const EmployeeList = () => {
         </Box>
       </Modal>
 
-      {/* Disburse Button: Visible only if at least one employee is selected */}
       {selectedEmployees.size > 0 && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
           <Button variant="contained" color="success" onClick={handleDisburse}>

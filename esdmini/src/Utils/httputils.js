@@ -5,7 +5,6 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 const API_BASE_URL = "http://localhost:8080/api/v1";
 
-// Generic Axios instance
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   
@@ -16,8 +15,9 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("jwt");
-    console.log(token);
-    config.headers.Authorization = `Bearer ${token}`;
+    if(token){
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     console.log(config.headers);
     return config;
   },
@@ -32,9 +32,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
     console.log(error);
       if (error) {
-          localStorage.removeItem("jwt");
-          toast.error(error.response.data.message, {
-            position: "top-center",
+        toast.error(error.response.data.message, {
+          position: "top-center",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -44,9 +43,12 @@ axiosInstance.interceptors.response.use(
             theme: "colored",
             transition: Bounce,
           });
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 5000);
+          if(error.response.data.statusCode!=406){
+            localStorage.removeItem("jwt");
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 5000);
+          }
           return new Promise(() => {});
       }
       return Promise.reject(error);

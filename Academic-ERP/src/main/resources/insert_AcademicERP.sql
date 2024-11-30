@@ -1,9 +1,10 @@
 USE AcademicERP;
 
 INSERT INTO departments (department_id, name, capacity) VALUES
-(1, 'Computer Science', 10),
-(2, 'Accounts', 5),
-(3, 'MLAI', 10);
+(1, 'Faculty', 10),
+(2, 'Intern', 5),
+(3, 'Accounts', 10),
+(4, 'Student', 10);
 
 INSERT INTO employees (employee_id, first_name, last_name, email, title, photograph_path, salary, department, password) VALUES
 (1, 'John','Doe','john.doe@academicuni.ac.in', 'Dean', '/images/john_doe.png', 75000, 1, 'null'),

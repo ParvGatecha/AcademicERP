@@ -7,6 +7,7 @@ import com.parvgatecha.academicerp.dto.employee.LoginRequest;
 import com.parvgatecha.academicerp.entity.Departments;
 import com.parvgatecha.academicerp.entity.EmployeeAccounts;
 import com.parvgatecha.academicerp.entity.EmployeeSalary;
+import com.parvgatecha.academicerp.exception.SalaryNotValidException;
 import com.parvgatecha.academicerp.helper.EncryptionService;
 import com.parvgatecha.academicerp.helper.JWTHelper;
 import com.parvgatecha.academicerp.mapper.EmployeesMapper;
@@ -82,6 +83,7 @@ public class EmployeeService {
     }
 
     public String updateEmployee(EmployeeResponse request) {
+        if(request.salary()<0){throw new SalaryNotValidException("Invalid Salary"); }
         Optional<Employees> optionalEmployee = employeeRepo.findById(request.employeeId());
         Departments department = departmentsRepo.findByName(request.departmentName());
         if(department == null){
@@ -103,32 +105,26 @@ public class EmployeeService {
             if (employee != null) {
                 EmployeeSalary employeeSalary = EmployeeSalary.builder()
                         .employee(employee)
-                        .amount(employee.getSalary())  // Assuming the salary is stored in the Employees table
+                        .amount(employee.getSalary())
                         .description("Salary Disbursed")
-                        .paymentDate(LocalDateTime.now())  // Set current time as payment date
+                        .paymentDate(LocalDateTime.now())
                         .build();
 
-                // Save the employee salary record
                 employeeSalaryRepo.save(employeeSalary);
 
-                // Find or create employee account to update the balance
                 EmployeeAccounts employeeAccounts = employeeAccountsRepo.findByEmployee(employee);
 
                 if (employeeAccounts == null) {
-                    // Create new EmployeeAccounts if not present
                     employeeAccounts = new EmployeeAccounts();
                     employeeAccounts.setEmployee(employee);
-                    employeeAccounts.setEmployeeBalance(0.0); // Set initial balance if needed
+                    employeeAccounts.setEmployeeBalance(0.0);
                 }
 
-                // Update employee balance by subtracting the disbursed salary
                 employeeAccounts.setEmployeeBalance(employeeAccounts.getEmployeeBalance() + employeeSalary.getAmount());
 
-                // Save the updated employee account balance
                 employeeAccountsRepo.save(employeeAccounts);
             } else {
                 System.out.println("Employee with ID " + emp.employeeId() + " not found.");
-                // You can also throw an exception or handle the error as needed
             }
         }
 

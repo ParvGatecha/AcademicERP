@@ -15,8 +15,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String method = request.getMethod();
-        String m = HttpMethod.OPTIONS.name();
+
         if(HttpMethod.OPTIONS.name().equals(request.getMethod())) { return true;}
 
         String authorizationHeader = request.getHeader("Authorization");
@@ -27,7 +26,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         String token = authorizationHeader.substring(7); // Extract token from "Bearer {token}"
         if (!jwtUtil.validateToken(token)) {
-            throw new JwtTokenNotValid("Not Valid Token");
+            throw new JwtTokenNotValid("JWT token Expired");
         }
 
         return true; // Allow request to proceed

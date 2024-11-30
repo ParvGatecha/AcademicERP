@@ -4,7 +4,7 @@ import { Avatar, Typography, Button, ListItem, Box, ListItemText, ListItemAvatar
 const EmployeeCard = ({ employee, isSelected, onCheckboxChange, onModifyClick }) => {
   return (
     <ListItem className="shadow p-3" sx={{ display: "flex", justifyContent: "space-between" }}>
-      {/* Checkbox */}
+      
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Checkbox
           checked={isSelected}
@@ -12,7 +12,6 @@ const EmployeeCard = ({ employee, isSelected, onCheckboxChange, onModifyClick })
         />
       </Box>
 
-      {/* Employee Info */}
       <ListItemAvatar>
         <Avatar alt={employee.first_name} src={employee.photograph_path} />
       </ListItemAvatar>
@@ -25,8 +24,6 @@ const EmployeeCard = ({ employee, isSelected, onCheckboxChange, onModifyClick })
         }
       />
 
-      {/* Modify Button */}
-      
       {employee.department == "Faculty" && (
         <Button variant="outlined" color="primary" sx={{ marginLeft: 2 }} onClick={() => onModifyClick(employee)}>
         Modify

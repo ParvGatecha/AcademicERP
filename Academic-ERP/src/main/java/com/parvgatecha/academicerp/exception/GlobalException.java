@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalException {
 
     @ExceptionHandler(value = EmployeeNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleExceptionStudentDoesNotExists(EmployeeNotFoundException EmployeeDoesNotExists) {
+    public ResponseEntity<ErrorResponse> handleExceptionEmployeeDoesNotExists(EmployeeNotFoundException EmployeeDoesNotExists) {
         ErrorResponse er=new ErrorResponse();
         er.setMessage(EmployeeDoesNotExists.getMessage());
         er.setStatusCode(HttpStatus.NOT_FOUND.value());
@@ -20,7 +20,6 @@ public class GlobalException {
     @ExceptionHandler(value = JwtTokenNotValid.class)
     public ResponseEntity<ErrorResponse> handleExceptionJwtTokenNotValid(JwtTokenNotValid tokenNotValid) {
         ErrorResponse er=new ErrorResponse();
-        System.out.println("erherhergw");
         er.setMessage(tokenNotValid.getMessage());
         er.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(er, HttpStatus.UNAUTHORIZED);
@@ -34,4 +33,11 @@ public class GlobalException {
         return new ResponseEntity<>(er, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(value = SalaryNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleExceptionSalaryNotValid(SalaryNotValidException invalidSalary) {
+        ErrorResponse er=new ErrorResponse();
+        er.setMessage(invalidSalary.getMessage());
+        er.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+        return new ResponseEntity<>(er, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

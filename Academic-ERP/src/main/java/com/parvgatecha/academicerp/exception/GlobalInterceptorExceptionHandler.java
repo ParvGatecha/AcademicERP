@@ -31,6 +31,6 @@ public class GlobalInterceptorExceptionHandler implements HandlerExceptionResolv
                 e.printStackTrace();
             }
         }
-        return new ModelAndView(); // No further processing
+        return new ModelAndView();
     }
 }
